@@ -1,0 +1,6 @@
+@Rijschool.WebAPI_HostAddress = http://localhost:5185
+
+GET {{Rijschool.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
