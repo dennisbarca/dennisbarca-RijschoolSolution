@@ -1,0 +1,121 @@
+﻿@page "/leerling"
+@using Rijschool.Frontend.Services
+@using Rijschool.Shared.DTOs.Leerling
+@using Rijschool.Shared.DTOs.Rijles
+@using Rijschool.Shared.DTOs.Examen
+@inject LeerlingService LeerlingService
+@inject RijlesService RijlesService
+@inject ExamenService ExamenService
+
+<h3>Mijn Profiel</h3>
+
+@if (leerling == null)
+{
+    <p>Laden...</p>
+}
+else
+{
+    <p><strong>Naam:</strong> @leerling.Voornaam @leerling.Achternaam</p>
+    <p><strong>Email:</strong> @leerling.Email</p>
+    <p><strong>Telefoon:</strong> @leerling.Telefoonnummer</p>
+    <p><strong>Adres:</strong> @leerling.Adres</p>
+}
+
+<h3>Geplande Rijlessen</h3>
+@if (rijlessen == null)
+{
+    <p>Laden...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Tijd</th>
+                <th>Instructeur</th>
+                <th>Ophaaladres</th>
+                <th>Lesdoel</th>
+                <th>Status</th>
+                <th>Acties</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var les in rijlessen)
+            {
+                <tr>
+                    <td>@les.Datum.ToShortDateString()</td>
+                    <td>@les.StartTijd - @les.EindTijd</td>
+                    <td>@les.InstructeurNaam</td>
+                    <td>@les.Ophaaladres</td>
+                    <td>@les.Lesdoel</td>
+                    <td>@les.Status</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" @onclick="() => WijzigOphaaladres(les.Id)">Wijzig adres</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => AnnuleerRijles(les.Id)">Annuleer</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h3>Exameninformatie</h3>
+@if (examens == null)
+{
+    <p>Laden...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Type</th>
+                <th>Resultaat</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var examen in examens)
+            {
+                <tr>
+                    <td>@examen.Datum.ToShortDateString()</td>
+                    <td>@examen.Type</td>
+                    <td>@(string.IsNullOrEmpty(examen.Resultaat) ? "Nog niet bekend" : examen.Resultaat)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private LeerlingDto leerling;
+    private List<RijlesDto> rijlessen;
+    private List<ExamenDto> examens;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // TODO: Pas 1 aan naar ingelogde leerling id
+        leerling = await LeerlingService.GetLeerling(1);
+        rijlessen = (await RijlesService.GetRijlessenVoorLeerling(1)).ToList();
+        examens = (await ExamenService.GetExamensVoorLeerling(1)).ToList();
+    }
+
+    private async Task WijzigOphaaladres(int rijlesId)
+    {
+        var nieuwAdres = "Nieuw adres"; // Hier kan je een popup of input gebruiken
+        await RijlesService.WijzigOphaaladres(rijlesId, nieuwAdres);
+        rijlessen = (await RijlesService.GetRijlessenVoorLeerling(1)).ToList();
+    }
+
+    private async Task AnnuleerRijles(int rijlesId)
+    {
+        var succes = await RijlesService.AnnuleerRijles(rijlesId);
+        if (!succes)
+        {
+            // Feedback geven
+            Console.WriteLine("Les kan niet worden geannuleerd (minder dan 24 uur).");
+        }
+        rijlessen = (await RijlesService.GetRijlessenVoorLeerling(1)).ToList();
+    }
+}

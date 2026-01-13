@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Rijschool.Applicatie.DTOs.Leerling;
-using Rijschool.WebAPI.Repositories;
+using Rijschool.Shared.DTOs.Leerling;
+using Rijschool.Applicatie.Repositories;
 using System.Collections.Generic;
-using Rijschool.Applicatie.DTOs.Examen;
-using Rijschool.Applicatie.DTOs.Rijles;
+using Rijschool.Shared.DTOs.Examen;
+using Rijschool.Shared.DTOs.Rijles;
+using Rijschool.Applicatie.Interfaces;
 
 namespace Rijschool.WebAPI.Controllers
 {
@@ -12,14 +13,15 @@ namespace Rijschool.WebAPI.Controllers
     [Route("api/[controller]")]
     public class LeerlingController : ControllerBase
     {
-        private readonly LeerlingRepository _leerlingRepository;
-        private readonly RijlesRepository _rijlesRepository;
-        private readonly ExamenRepository _examenRepository;
+        private readonly ILeerlingRepository _leerlingRepository;
+        private readonly IRijlesRepository _rijlesRepository;
+        private readonly IExamenRepository _examenRepository;
+
 
         public LeerlingController(
-            LeerlingRepository leerlingRepository,
-            RijlesRepository rijlesRepository,
-            ExamenRepository examenRepository)
+            ILeerlingRepository leerlingRepository,
+            IRijlesRepository rijlesRepository,
+            IExamenRepository examenRepository)
         {
             _leerlingRepository = leerlingRepository;
             _rijlesRepository = rijlesRepository;

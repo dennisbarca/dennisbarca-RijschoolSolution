@@ -1,4 +1,8 @@
-using Rijschool.WebAPI.Repositories;
+using Rijschool.Applicatie.Repositories;
+using Rijschool.Applicatie.Interfaces;
+using Microsoft.AspNetCore.Cors.Infrastructure;
+
+
 
 namespace Rijschool.WebAPI
 {
@@ -13,12 +17,22 @@ namespace Rijschool.WebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins("https://localhost:7106") // Blazor mag requests doen
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             // Repositories
-            builder.Services.AddSingleton<ExamenRepository>();
-            builder.Services.AddSingleton<InstructeurRepository>();
-            builder.Services.AddSingleton<LeerlingRepository>();
-            builder.Services.AddSingleton<RijlesRepository>();
-            builder.Services.AddSingleton<ZiekmeldingRepository>();
+            builder.Services.AddSingleton<IExamenRepository, ExamenRepository>();
+            builder.Services.AddSingleton<IInstructeurRepository, InstructeurRepository>();
+            builder.Services.AddSingleton<ILeerlingRepository, LeerlingRepository>();
+            builder.Services.AddSingleton<IRijlesRepository, RijlesRepository>();
+            builder.Services.AddSingleton<IZiekmeldingRepository, ZiekmeldingRepository>();
 
             var app = builder.Build();
 
@@ -30,6 +44,8 @@ namespace Rijschool.WebAPI
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors();
 
             app.UseAuthorization();
 

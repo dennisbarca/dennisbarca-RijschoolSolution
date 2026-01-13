@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Rijschool.Applicatie.DTOs.Instructeur;
-using Rijschool.Applicatie.DTOs.Rijles;
-using Rijschool.Applicatie.DTOs.Examen;
-using Rijschool.Applicatie.DTOs.Ziekmelding;
-using Rijschool.WebAPI.Repositories;
+using Rijschool.Shared.DTOs.Instructeur;
+using Rijschool.Shared.DTOs.Rijles;
+using Rijschool.Shared.DTOs.Examen;
+using Rijschool.Shared.DTOs.Ziekmelding;
+using Rijschool.Applicatie.Repositories;
+using Rijschool.Applicatie.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,22 +15,24 @@ namespace Rijschool.WebAPI.Controllers
     [Route("api/[controller]")]
     public class InstructeurController : ControllerBase
     {
-        private readonly InstructeurRepository _instructeurRepository;
-        private readonly RijlesRepository _rijlesRepository;
-        private readonly ExamenRepository _examenRepository;
-        private readonly ZiekmeldingRepository _ziekmeldingRepository;
+
+        private readonly IInstructeurRepository _instructeurRepository;
+        private readonly IRijlesRepository _rijlesRepository;
+        private readonly IExamenRepository _examenRepository;
+        private readonly IZiekmeldingRepository _ziekmeldingRepository;
 
         public InstructeurController(
-            InstructeurRepository instructeurRepository,
-            RijlesRepository rijlesRepository,
-            ExamenRepository examenRepository,
-            ZiekmeldingRepository ziekmeldingRepository)
+            IInstructeurRepository instructeurRepository,
+            IRijlesRepository rijlesRepository,
+            IExamenRepository examenRepository,
+            IZiekmeldingRepository ziekmeldingRepository)
         {
             _instructeurRepository = instructeurRepository;
             _rijlesRepository = rijlesRepository;
             _examenRepository = examenRepository;
             _ziekmeldingRepository = ziekmeldingRepository;
         }
+
 
         // GET api/instructeur/{id}
         // Haal profielgegevens van een instructeur op
