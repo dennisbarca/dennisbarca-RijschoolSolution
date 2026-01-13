@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Rijschool.Applicatie.DTOs.Examen;
-using Rijschool.WebAPI.Repositories;
+using Rijschool.Shared.DTOs.Examen;
+using Rijschool.Applicatie.Repositories;
 using System.Collections.Generic;
+using Rijschool.Applicatie.Interfaces;
 
 namespace Rijschool.WebAPI.Controllers
 {
@@ -10,12 +11,13 @@ namespace Rijschool.WebAPI.Controllers
     [Route("api/[controller]")]
     public class ExamenController : ControllerBase
     {
-        private readonly ExamenRepository _repository;
+        private readonly IExamenRepository _repository;
 
-        public ExamenController(ExamenRepository repository)
+        public ExamenController(IExamenRepository repository)
         {
             _repository = repository;
         }
+
 
         // GET api/examen
         // Haal alle examens op

@@ -1,0 +1,41 @@
+﻿@page "/instructeur"
+
+@using Rijschool.Frontend.Services
+@using Rijschool.Shared.DTOs.Instructeur
+@using Rijschool.Shared.DTOs.Rijles
+@using Rijschool.Shared.DTOs.Examen
+@using Rijschool.Shared.DTOs.Ziekmelding
+
+@inject InstructeurService InstructeurService
+@inject RijlesService RijlesService
+@inject ExamenService ExamenService
+@inject ZiekmeldingService ZiekmeldingService
+
+<h3>Instructeur Dashboard</h3>
+
+@if (instructeur == null)
+{
+    <p>Laden...</p>
+}
+else
+{
+    <p><b>Naam:</b> @instructeur.Voornaam @instructeur.Achternaam</p>
+    <p><b>Email:</b> @instructeur.Email</p>
+    <p><b>Telefoon:</b> @instructeur.Telefoonnummer</p>
+}
+@code {
+    private InstructeurDto instructeur;
+    private List<RijlesDto> rijlessen;
+    private List<ExamenDto> examens;
+    private List<ZiekmeldingDto> ziekmeldingen;
+
+    protected override async Task OnInitializedAsync()
+    {
+        int instructeurId = 1; // later uit login halen
+
+        instructeur = await InstructeurService.GetInstructeur(instructeurId);
+        rijlessen = (await RijlesService.GetRijlessenVoorInstructeur(instructeurId)).ToList();
+        examens = (await ExamenService.GetExamensVoorInstructeur(instructeurId)).ToList();
+        ziekmeldingen = (await ZiekmeldingService.GetZiekmeldingenVoorInstructeur(instructeurId)).ToList();
+    }
+}
